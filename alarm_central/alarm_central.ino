@@ -70,7 +70,7 @@ void loop() {
               turnOn(GREEN_LED);
               sirenBeep(2);
           } else if(receivedSignal() == SENSOR_SIGNAL) {
-              state = ALARM_STARTED;  
+              state = ALARM_STARTED; 
               turnOn(SIREN);
           }
       break;
