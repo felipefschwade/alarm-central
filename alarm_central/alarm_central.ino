@@ -12,12 +12,13 @@ enum Status {
     ALARM_OFF,
     ALARM_ON,
     ALARM_STARTED,
-    NEW_CONTROL
+    NEW_CONTROL_ADDING
   };
 
 enum receivedSignal {
     CONTROL_SIGNAL,
-    SENSOR_SIGNAL
+    SENSOR_SIGNAL,
+    NEW_CONTROL_BUTTON
   };
 const char *sensor = "01010101010101010101010";
 const char *controle = "0110100100110100110100100110110110100100100100100100110100100110110110100100110100110";
@@ -57,7 +58,10 @@ void loop() {
               turnOn(RED_LED);
               sirenBeep(1);
             } else if (receivedSignal() == NEW_CONTROL_BUTTON) {
-              
+                if buttonPressedFor5Sec() {
+                    state = NEW_CONTROL_ADDING;
+                  }
+              }
             }
       break;
       case ALARM_ON:
