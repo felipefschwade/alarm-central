@@ -30,9 +30,8 @@ void setup()
 {
   initiate_pins();
   int state = ALARM_OFF;
-  ledOn(GREEN_LED);
+  turnOn(GREEN_LED);
   Serial.begin(9600);
-  delay(500);
   Serial.println("INICIADO!");
   params.spaceMin = 3500;
   params.spaceMax = 17000;
@@ -54,8 +53,8 @@ void loop() {
           Serial.println("Alarm Off");
           if (receivedSignal() == CONTROL_SIGNAL) {
               state = ALARM_ON;
-              ledOff(GREEN_LED);
-              ledOn(RED_LED);
+              turnOff(GREEN_LED);
+              turnOn(RED_LED);
               sirenBeep(1);
             }
       break;
@@ -97,21 +96,15 @@ void initiate_pins() {
 int receivedSignal() {
     
   }
-void sirenOff() {
-  digitalWrite(SIREN, LOW);  
-}
-void sirenOn() {
-  digitalWrite(SIREN, HIGH);  
-}
 void ledBlink(int led) {
    digitalWrite(led, HIGH);
    delay(200);
    digitalWrite(led, LOW);
 }
-void ledOn(int led) {
+void turnOn(int led) {
   digitalWrite(led, HIGH);
 }
-void ledOff(int led) {
+void turnOff(int led) {
   digitalWrite(led, LOW);
 }
 void sirenBeep(int times) {
