@@ -28,7 +28,7 @@ RFrecv rfrecv;
 
 void setup()
 {
-  initiate_pins();
+  initiatePins();
   int state = ALARM_OFF;
   turnOn(GREEN_LED);
   Serial.begin(9600);
@@ -96,7 +96,7 @@ void loop() {
   }
 }
 
-void initiate_pins() {
+void initiatePins() {
     pinMode(SENSOR_PIR1, INPUT);
     pinMode(SENSOR_PIR2, INPUT);
     pinMode(NEW_CONTROL_BUTTON, INPUT_PULLUP);
