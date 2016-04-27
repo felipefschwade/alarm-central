@@ -116,6 +116,8 @@ void ledOff(int led) {
 }
 void sirenBeep(int times) {
     for (int i = 0; i < times; i++) {
-      
+        pinMode(SIREN, HIGH);
+        delay(200);
+        pinMode(SIREN, LOW);
       }
   }
