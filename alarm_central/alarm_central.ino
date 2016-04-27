@@ -112,12 +112,14 @@ void ledBlink(int led) {
    delay(100);
    digitalWrite(led, LOW);
 }
-void blinkAllLeds() {
-    digitalWrite(RED_LED, HIGH);
-    digitalWrite(GREEN_LED, HIGH);
-    delay(200);
-    digitalWrite(RED_LED, LOW);
-    digitalWrite(GREEN_LED, LOW);
+void blinkAllLeds(int times) {
+    for (int i = 0; i < times; i++) {
+      digitalWrite(RED_LED, HIGH);
+      digitalWrite(GREEN_LED, HIGH);
+      delay(200);
+      digitalWrite(RED_LED, LOW);
+      digitalWrite(GREEN_LED, LOW);
+    }
   }
 void turnOn(int led) {
   digitalWrite(led, HIGH);
