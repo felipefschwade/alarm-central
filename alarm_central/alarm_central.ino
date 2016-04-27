@@ -97,9 +97,9 @@ void loop() {
 }
 
 void initiate_pins() {
-    pinMode(PIN_SENSOR_PIR1, INPUT);
-    pinMode(PIN_SENSOR_PIR2, INPUT);
-    pinMode(PIN_NEWCONTROL_BUTTON, INPUT_PULLUP);
+    pinMode(SENSOR_PIR1, INPUT);
+    pinMode(SENSOR_PIR2, INPUT);
+    pinMode(NEW_CONTROL_BUTTON, INPUT_PULLUP);
     pinMode(SIREN, OUTPUT);
     pinMode(RED_LED, OUTPUT);
     pinMode(GREEN_LED, OUTPUT);
@@ -112,6 +112,13 @@ void ledBlink(int led) {
    delay(100);
    digitalWrite(led, LOW);
 }
+void blinkAllLeds() {
+    digitalWrite(RED_LED, HIGH);
+    digitalWrite(GREEN_LED, HIGH);
+    delay(200);
+    digitalWrite(RED_LED, LOW);
+    digitalWrite(GREEN_LED, LOW);
+  }
 void turnOn(int led) {
   digitalWrite(led, HIGH);
 }
