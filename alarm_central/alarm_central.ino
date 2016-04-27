@@ -62,13 +62,22 @@ void loop() {
           Serial.println("Alarm On");
           if (receivedSignal() == CONTROL_SIGNAL) {
               state = ALARM_OFF;
+              turnOff(RED_LED);
+              turnOn(GREEN_LED);
+              sirenBeep(2);
           } else if(receivedSignal() == SENSOR_SIGNAL) {
-              state = ALARM_STARTED;
+              state = ALARM_STARTED;  
+              turnOn(SIREN);
           }
       break;
       case ALARM_STARTED:
           Serial.println("Danger, Alarm Started");
-          
+          ledBlink(RED_LED);
+          if (receivedSignal() == CONTROL_SIGNAL) {
+            turnOff(SIREN);
+            turnOn(RED_LED);
+            sirenBeep(2);  
+          }
     }
   
   if (rfrecv.available())
@@ -98,7 +107,7 @@ int receivedSignal() {
   }
 void ledBlink(int led) {
    digitalWrite(led, HIGH);
-   delay(200);
+   delay(100);
    digitalWrite(led, LOW);
 }
 void turnOn(int led) {
