@@ -53,7 +53,10 @@ void loop() {
       case ALARM_OFF:
           Serial.println("Alarm Off");
           if (receivedSignal() == CONTROL_SIGNAL) {
-              state = ALARM_ON;  
+              state = ALARM_ON;
+              ledOff(GREEN_LED);
+              ledOn(RED_LED);
+              sirenBeep(1);
             }
       break;
       case ALARM_ON:
@@ -111,3 +114,8 @@ void ledOn(int led) {
 void ledOff(int led) {
   digitalWrite(led, LOW);
 }
+void sirenBeep(int times) {
+    for (int i = 0; i < times; i++) {
+      
+      }
+  }
