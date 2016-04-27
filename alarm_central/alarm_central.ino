@@ -1,9 +1,9 @@
 
 #include <RFremote.h>
 //By default, the RF SENSOR pin is definited in RFremote.h on pin2
-#define PIN_SENSOR_PIR1 3
-#define PIN_SENSOR_PIR2 4
-#define PIN_NEWCONTROL_BUTTON 5 
+#define SENSOR_PIR1 3
+#define SENSOR_PIR2 4
+#define NEW_CONTROL_BUTTON 5 
 #define SIREN 8
 #define RED_LED 9
 #define GREEN_LED 10
@@ -56,6 +56,8 @@ void loop() {
               turnOff(GREEN_LED);
               turnOn(RED_LED);
               sirenBeep(1);
+            } else if (receivedSignal() == NEW_CONTROL_BUTTON) {
+              
             }
       break;
       case ALARM_ON:
