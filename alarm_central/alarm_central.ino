@@ -28,8 +28,9 @@ RFrecv rfrecv;
 
 void setup()
 {
-  int state = ALARM_OFF;
   initiate_pins();
+  int state = ALARM_OFF;
+  ledOn(GREEN_LED);
   Serial.begin(9600);
   delay(500);
   Serial.println("INICIADO!");
@@ -63,6 +64,9 @@ void loop() {
               state = ALARM_STARTED;
           }
       break;
+      case ALARM_STARTED:
+          Serial.println("Danger, Alarm Started");
+          
     }
   
   if (rfrecv.available())
@@ -95,4 +99,15 @@ void sirenOff() {
 }
 void sirenOn() {
   digitalWrite(SIREN, HIGH);  
+}
+void ledBlink(int led) {
+   digitalWrite(led, HIGH);
+   delay(200);
+   digitalWrite(led, LOW);
+}
+void ledOn(int led) {
+  digitalWrite(led, HIGH);
+}
+void ledOff(int led) {
+  digitalWrite(led, LOW);
 }
