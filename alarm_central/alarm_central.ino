@@ -47,11 +47,11 @@ void setup()
 }
 
 void loop() {
-
+  int receivedsignal =  receivedSignal();
   switch (state) {
       case ALARM_OFF:
           Serial.println("Alarm Off");
-          if (receivedSignal() == CONTROL_SIGNAL) {
+          if (receivedsignal == CONTROL_SIGNAL) {
               state = ALARM_ON;
               turnOff(GREEN_LED);
               turnOn(RED_LED);
@@ -96,14 +96,12 @@ void initiatePins() {
 }
 //ReceivedSignal will be improved using switch case, this version is just for testing
 int receivedSignal() {
-     if (rfrecv.available()) {
-       if (strncmp((char*)rfrecv.cmd, sensor, CMD_SIZE) == 0) {
+     if (rfrecv.available() && strncmp((char*)rfrecv.cmd, sensor, CMD_SIZE) == 0) {
         Serial.println("Door/Window Open Sensor Signal!");
         return SENSOR_SIGNAL;
-       } else if (strncmp((char*)rfrecv.cmd, controle, CMD_SIZE) == 0) {
-        Serial.println("Controll Signal");
+     } else if (rfrecv.available() && strncmp((char*)rfrecv.cmd, controle, CMD_SIZE) == 0) {
+        Serial.println("Control Signal");
         return CONTROL_SIGNAL;
-       }
      } else if (SENSOR_PIR1 == 0) {
          Serial.println("Sensor PIR1 Signal");
          return SENSOR_SIGNAL;
