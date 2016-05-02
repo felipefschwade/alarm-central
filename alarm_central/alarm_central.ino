@@ -12,13 +12,12 @@ enum Status {
     ALARM_OFF,
     ALARM_ON,
     ALARM_STARTED,
-    NEW_CONTROL_ADDING
+    NEW_CONTROL
   };
 
 enum receivedSignal {
     CONTROL_SIGNAL,
-    SENSOR_SIGNAL,
-    NEW_CONTROL_BUTTON_PRESSED
+    SENSOR_SIGNAL
   };
 const char *sensor = "01010101010101010101010";
 const char *controle = "0110100100110100110100100110110110100100100100100100110100100110110110100100110100110";
@@ -27,7 +26,8 @@ const char *controle = "01101001001101001101001001101101101001001001001001001101
 SignalPatternParams params;
 RFrecv rfrecv;
 
-void setup() {
+void setup()
+{
   initiatePins();
   int state = ALARM_OFF;
   turnOn(GREEN_LED);
@@ -56,11 +56,9 @@ void loop() {
               turnOff(GREEN_LED);
               turnOn(RED_LED);
               sirenBeep(1);
-            } else if (receivedSignal() == NEW_CONTROL_BUTTON_PRESSED) {
-                if (buttonPressedFor5Sec()) {
-                    state = NEW_CONTROL_ADDING;
-                  }
-              }
+            } else if (newControlButtonPressedFor5sec()) {
+              state = NEW_CONTROL;
+            }
       break;
       case ALARM_ON:
           Serial.println("Alarm On");
@@ -70,7 +68,7 @@ void loop() {
               turnOn(GREEN_LED);
               sirenBeep(2);
           } else if(receivedSignal() == SENSOR_SIGNAL) {
-              state = ALARM_STARTED; 
+              state = ALARM_STARTED;  
               turnOn(SIREN);
           }
       break;
@@ -136,6 +134,13 @@ void sirenBeep(int times) {
         pinMode(SIREN, LOW);
       }
   }
-int buttonPressedFor5Sec() {
-  
+int newControlButtonPressedFor5sec() {
+    for (int i = 0; i <= 50; i++) {
+        if (NEW_CONTROL_BUTTON == 1) {
+          return 0;
+        } else if (i == 50){
+          return 1;
+        }
+        delay(100);
+    }
 }
