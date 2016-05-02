@@ -80,6 +80,7 @@ void loop() {
             turnOn(RED_LED);
             sirenBeep(2);  
           }
+      break;
     }
   
   if (rfrecv.available())
