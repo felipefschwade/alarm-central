@@ -49,11 +49,13 @@ void setup()
 void loop() {
   Serial.println(SENSOR_PIR1);
   int receivedsignal =  receivedSignal();
+  Serial.println(receivedsignal);
   switch (state) {
       case ALARM_OFF:
           Serial.println("Alarm Off");
           if (receivedsignal == CONTROL_SIGNAL) {
               state = ALARM_ON;
+              Serial.println(receivedsignal);
               turnOff(GREEN_LED);
               turnOn(RED_LED);
               sirenBeep(1);
@@ -103,10 +105,10 @@ int receivedSignal() {
      } else if (rfrecv.available() && strncmp((char*)rfrecv.cmd, controle, CMD_SIZE) == 0) {
         Serial.println("Control Signal");
         return CONTROL_SIGNAL;
-     } else if (SENSOR_PIR1 == 0) {
+     } else if (digitalRead(SENSOR_PIR1) == 0) {
          Serial.println("Sensor PIR1 Signal");
          return SENSOR_SIGNAL;
-     } else if (SENSOR_PIR2 == 0) {
+     } else if (digitalRead(SENSOR_PIR2) == 0) {
          Serial.println("Sensor PIR1 Signal");
          return SENSOR_SIGNAL;
      }
