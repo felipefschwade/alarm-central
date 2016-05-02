@@ -12,12 +12,13 @@ enum Status {
     ALARM_OFF,
     ALARM_ON,
     ALARM_STARTED,
-    NEW_CONTROL
+    NEW_CONTROL_ADDING
   };
 
 enum receivedSignal {
     CONTROL_SIGNAL,
-    SENSOR_SIGNAL
+    SENSOR_SIGNAL,
+    NEW_CONTROL_BUTTON_SIGNAL
   };
 const char *sensor = "01010101010101010101010";
 const char *controle = "0110100100110100110100100110110110100100100100100100110100100110110110100100110100110";
@@ -57,7 +58,7 @@ void loop() {
               turnOn(RED_LED);
               sirenBeep(1);
             } else if (newControlButtonPressedFor5sec()) {
-              state = NEW_CONTROL;
+              state = NEW_CONTROL_ADDING;
             }
       break;
       case ALARM_ON:
@@ -81,20 +82,9 @@ void loop() {
             sirenBeep(2);  
           }
       break;
+      case NEW_CONTROL_ADDING:
+      break;
     }
-  
-  if (rfrecv.available())
-  {
-    if (strncmp((char*)rfrecv.cmd, sensor, CMD_SIZE) == 0)
-    {
-      Serial.println("Disparado!");
-    } 
-    else if (strncmp((char*)rfrecv.cmd, controle, CMD_SIZE) == 0) {
-      Serial.println("Sinal do Controle!");
-    } else {
-      Serial.println("ERRO!");
-    }
-  }
 }
 
 void initiatePins() {
@@ -105,9 +95,24 @@ void initiatePins() {
     pinMode(RED_LED, OUTPUT);
     pinMode(GREEN_LED, OUTPUT);
 }
+//ReceivedSignal will be improved using switch case, this version is just for testing
 int receivedSignal() {
-    
-  }
+     if (rfrecv.available()) {
+       if (strncmp((char*)rfrecv.cmd, sensor, CMD_SIZE) == 0) {
+        Serial.println("Door/Window Open Sensor Signal!");
+        return SENSOR_SIGNAL;
+       } else if (strncmp((char*)rfrecv.cmd, controle, CMD_SIZE) == 0) {
+        Serial.println("Controll Signal");
+        return CONTROL_SIGNAL;
+       }
+     } else if (SENSOR_PIR1 == 0) {
+         Serial.println("Sensor PIR1 Signal");
+         return SENSOR_SIGNAL;
+     } else if (SENSOR_PIR2 == 0) {
+         Serial.println("Sensor PIR1 Signal");
+         return SENSOR_SIGNAL;
+     }
+}
 void ledBlink(int led) {
    digitalWrite(led, HIGH);
    delay(100);
