@@ -47,6 +47,7 @@ void setup()
 }
 
 void loop() {
+  Serial.println(SENSOR_PIR1);
   int receivedsignal =  receivedSignal();
   switch (state) {
       case ALARM_OFF:
