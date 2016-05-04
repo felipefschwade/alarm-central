@@ -7,6 +7,7 @@
 #define SIREN 8
 #define RED_LED 9
 #define GREEN_LED 10
+#define INDEFINIDO -1
 int state;
 enum Status {
     ALARM_OFF,
@@ -47,13 +48,18 @@ void setup()
 }
 
 void loop() {
-  int receivedsignal =  receivedSignal();
+  if (rfrecv.available()){
+    Serial.println((char*)rfrecv.cmd);
+  }
+  int signalReceived = receivedSignal();
+  Serial.println(signalReceived);
   switch (state) {
       case ALARM_OFF:
           Serial.println("Alarm Off");
-          if (receivedsignal == CONTROL_SIGNAL) {
+          Serial.println(signalReceived);
+          if (signalReceived == CONTROL_SIGNAL) {
               state = ALARM_ON;
-              Serial.println(receivedsignal);
+              Serial.println(signalReceived);
               turnOff(GREEN_LED);
               turnOn(RED_LED);
               sirenBeep(1);
@@ -98,20 +104,23 @@ void initiatePins() {
 }
 //ReceivedSignal will be improved using switch case, this version is just for testing
 int receivedSignal() {
-     if (rfrecv.available() && strncmp((char*)rfrecv.cmd, sensor, CMD_SIZE) == 0) {
-        Serial.println("Door/Window Open Sensor Signal!");
-        Serial.println((char*)rfrecv.cmd);
-        return SENSOR_SIGNAL;
-     } else if (rfrecv.available() && strncmp((char*)rfrecv.cmd, controle, CMD_SIZE) == 0) {
-        Serial.println("Control Signal");
-        return CONTROL_SIGNAL;
-     } else if (digitalRead(SENSOR_PIR1) == 0) {
-         Serial.println("Sensor PIR1 Signal");
-         return SENSOR_SIGNAL; }
-    // } else if (digitalRead(SENSOR_PIR2) == 0) {
-    //    Serial.println("Sensor PIR2 Signal");
-    //    return SENSOR_SIGNAL;
-    //}
+       if (rfrecv.available() && strncmp((char*)rfrecv.cmd, sensor, CMD_SIZE) == 0) {
+          Serial.println("Door/Window Open Sensor Signal!");
+          return SENSOR_SIGNAL;
+      }
+      if (rfrecv.available() && strncmp((char*)rfrecv.cmd, controle, CMD_SIZE) == 0) {
+          Serial.println("Control Signal");
+          return CONTROL_SIGNAL; 
+      }
+//      if (digitalRead(SENSOR_PIR1) == 0) {
+//         Serial.println("Sensor PIR1 Signal");
+//         return SENSOR_SIGNAL; 
+//     }
+//      if (digitalRead(SENSOR_PIR2) == 0) {
+//        Serial.println("Sensor PIR2 Signal");
+//        return SENSOR_SIGNAL;
+//      }
+    return INDEFINIDO;
 }
 void ledBlink(int led) {
    digitalWrite(led, HIGH);
