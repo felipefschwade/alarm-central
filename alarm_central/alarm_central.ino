@@ -29,7 +29,7 @@ RFrecv rfrecv;
 void setup()
 {
   initiatePins();
-  int state = ALARM_OFF;
+  state = ALARM_OFF;
   turnOn(GREEN_LED);
   Serial.begin(9600);
   Serial.println("INICIADO!");
@@ -47,9 +47,7 @@ void setup()
 }
 
 void loop() {
-  Serial.println(SENSOR_PIR1);
   int receivedsignal =  receivedSignal();
-  Serial.println(receivedsignal);
   switch (state) {
       case ALARM_OFF:
           Serial.println("Alarm Off");
@@ -59,9 +57,10 @@ void loop() {
               turnOff(GREEN_LED);
               turnOn(RED_LED);
               sirenBeep(1);
-            } else if (newControlButtonPressedFor5sec()) {
-              state = NEW_CONTROL_ADDING;
             }
+            //} else if (newControlButtonPressedFor5sec()) {
+            //  state = NEW_CONTROL_ADDING;
+            //}
       break;
       case ALARM_ON:
           Serial.println("Alarm On");
@@ -101,17 +100,18 @@ void initiatePins() {
 int receivedSignal() {
      if (rfrecv.available() && strncmp((char*)rfrecv.cmd, sensor, CMD_SIZE) == 0) {
         Serial.println("Door/Window Open Sensor Signal!");
+        Serial.println((char*)rfrecv.cmd);
         return SENSOR_SIGNAL;
      } else if (rfrecv.available() && strncmp((char*)rfrecv.cmd, controle, CMD_SIZE) == 0) {
         Serial.println("Control Signal");
         return CONTROL_SIGNAL;
      } else if (digitalRead(SENSOR_PIR1) == 0) {
          Serial.println("Sensor PIR1 Signal");
-         return SENSOR_SIGNAL;
-     } else if (digitalRead(SENSOR_PIR2) == 0) {
-         Serial.println("Sensor PIR1 Signal");
-         return SENSOR_SIGNAL;
-     }
+         return SENSOR_SIGNAL; }
+    // } else if (digitalRead(SENSOR_PIR2) == 0) {
+    //    Serial.println("Sensor PIR2 Signal");
+    //    return SENSOR_SIGNAL;
+    //}
 }
 void ledBlink(int led) {
    digitalWrite(led, HIGH);
@@ -142,7 +142,7 @@ void sirenBeep(int times) {
   }
 int newControlButtonPressedFor5sec() {
     for (int i = 0; i <= 50; i++) {
-        if (NEW_CONTROL_BUTTON == 1) {
+        if (digitalRead(NEW_CONTROL_BUTTON == 0)) {
           return 0;
         } else if (i == 50){
           return 1;
