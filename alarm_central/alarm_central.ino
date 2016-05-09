@@ -79,15 +79,15 @@ void loop() {
           }
       break;
       case ALARM_STARTED:
-          ledBlink(RED_LED);
           if (signalReceived == CONTROL_SIGNAL) {
-            turnOff(SIREN);
-            state = ALARM_OFF;
-            Serial.println("Alarm Off");
-            Serial.println(state);
-            turnOn(RED_LED);
-            sirenBeep(2);  
-          }
+                turnOff(SIREN);
+                state = ALARM_OFF;
+                Serial.println("Alarm Off");
+                Serial.println(state);
+                turnOn(RED_LED);
+                sirenBeep(2);  
+              }
+          //ledBlink(RED_LED);
       break;
       case NEW_CONTROL_ADDING:
       break;
@@ -115,14 +115,14 @@ int receivedSignal() {
                 return CONTROL_SIGNAL; 
               }
           }
-//      if (digitalRead(SENSOR_PIR1) == 0) {
-//         Serial.println("Sensor PIR1 Signal");
-//         return SENSOR_SIGNAL; 
-//      }
-//      if (digitalRead(SENSOR_PIR2) == 0) {
-//        Serial.println("Sensor PIR2 Signal");
-//        return SENSOR_SIGNAL;
-//      }
+     if (digitalRead(SENSOR_PIR1) == 0) {
+         Serial.println("Sensor PIR1 Signal");
+         return SENSOR_SIGNAL; 
+        }
+      if (digitalRead(SENSOR_PIR2) == 0) {        
+        Serial.println("Sensor PIR2 Signal");        
+        return SENSOR_SIGNAL;      
+      }
     return INDEFINIDO;
 }
 void ledBlink(int led) {
