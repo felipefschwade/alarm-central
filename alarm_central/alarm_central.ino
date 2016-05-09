@@ -48,18 +48,13 @@ void setup()
 }
 
 void loop() {
-  if (rfrecv.available()){
-    Serial.println((char*)rfrecv.cmd);
-  }
   int signalReceived = receivedSignal();
-  Serial.println(signalReceived);
   switch (state) {
       case ALARM_OFF:
-          Serial.println("Alarm Off");
-          Serial.println(signalReceived);
           if (signalReceived == CONTROL_SIGNAL) {
+              Serial.println("Alarm On");
               state = ALARM_ON;
-              Serial.println(signalReceived);
+              Serial.println(state);
               turnOff(GREEN_LED);
               turnOn(RED_LED);
               sirenBeep(1);
@@ -69,22 +64,27 @@ void loop() {
             //}
       break;
       case ALARM_ON:
-          Serial.println("Alarm On");
-          if (receivedSignal() == CONTROL_SIGNAL) {
+          if (signalReceived == CONTROL_SIGNAL) {
+              Serial.println("Alarm Off");
               state = ALARM_OFF;
+              Serial.println(state);
               turnOff(RED_LED);
               turnOn(GREEN_LED);
               sirenBeep(2);
-          } else if(receivedSignal() == SENSOR_SIGNAL) {
+          } else if(signalReceived == SENSOR_SIGNAL) {
               state = ALARM_STARTED;  
+              Serial.println(state);
+              Serial.println("Alarm STARTED");
               turnOn(SIREN);
           }
       break;
       case ALARM_STARTED:
-          Serial.println("Danger, Alarm Started");
           ledBlink(RED_LED);
-          if (receivedSignal() == CONTROL_SIGNAL) {
+          if (signalReceived == CONTROL_SIGNAL) {
             turnOff(SIREN);
+            state = ALARM_OFF;
+            Serial.println("Alarm Off");
+            Serial.println(state);
             turnOn(RED_LED);
             sirenBeep(2);  
           }
@@ -104,18 +104,21 @@ void initiatePins() {
 }
 //ReceivedSignal will be improved using switch case, this version is just for testing
 int receivedSignal() {
-       if (rfrecv.available() && strncmp((char*)rfrecv.cmd, sensor, CMD_SIZE) == 0) {
-          Serial.println("Door/Window Open Sensor Signal!");
-          return SENSOR_SIGNAL;
-      }
-      if (rfrecv.available() && strncmp((char*)rfrecv.cmd, controle, CMD_SIZE) == 0) {
-          Serial.println("Control Signal");
-          return CONTROL_SIGNAL; 
-      }
+       if (rfrecv.available()) {
+              Serial.println((char*)rfrecv.cmd);
+              if (strncmp((char*)rfrecv.cmd, sensor, CMD_SIZE) == 0) {
+                Serial.println("Door/Window Open Sensor Signal!");
+                return SENSOR_SIGNAL;
+              }
+              if (strncmp((char*)rfrecv.cmd, controle, CMD_SIZE) == 0) {
+                Serial.println("Control Signal");
+                return CONTROL_SIGNAL; 
+              }
+          }
 //      if (digitalRead(SENSOR_PIR1) == 0) {
 //         Serial.println("Sensor PIR1 Signal");
 //         return SENSOR_SIGNAL; 
-//     }
+//      }
 //      if (digitalRead(SENSOR_PIR2) == 0) {
 //        Serial.println("Sensor PIR2 Signal");
 //        return SENSOR_SIGNAL;
