@@ -52,12 +52,12 @@ void loop() {
   int signalReceived = receivedSignal();
   switch (state) {
       case ALARM_OFF:
+          ledBlink(GREEN_LED);
           if (signalReceived == CONTROL_SIGNAL) {
+              turnOff(GREEN_LED);
               Serial.println("Alarm On");
               state = ALARM_ON;
               Serial.println(state);
-              turnOff(GREEN_LED);
-              turnOn(RED_LED);
               sirenBeep(1);
             }
             //} else if (newControlButtonPressedFor5sec()) {
@@ -65,12 +65,12 @@ void loop() {
             //}
       break;
       case ALARM_ON:
+          ledBlink(RED_LED);
           if (signalReceived == CONTROL_SIGNAL) {
               Serial.println("Alarm Off");
               state = ALARM_OFF;
               Serial.println(state);
               turnOff(RED_LED);
-              turnOn(GREEN_LED);
               sirenBeep(2);
           } else if(signalReceived == SENSOR_SIGNAL) {
               state = ALARM_STARTED;  
@@ -80,12 +80,14 @@ void loop() {
           }
       break;
       case ALARM_STARTED:
+          ledBlink(GREEN_LED);
+          ledBlink(RED_LED);
           if (signalReceived == CONTROL_SIGNAL) {
                 turnOff(SIREN);
                 state = ALARM_OFF;
                 Serial.println("Alarm Off");
                 Serial.println(state);
-                turnOn(RED_LED);
+                turnOff(RED_LED);
                 sirenBeep(2);  
               }
           //ledBlink(RED_LED);
