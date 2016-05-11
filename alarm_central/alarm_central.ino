@@ -116,8 +116,7 @@ int receivedSignal() {
               }
           }
      if (digitalRead(SENSOR_PIR1) == 0) {
-         Serial.println("Sensor PIR1 Signal");
-         return SENSOR_SIGNAL; 
+           return SENSOR_SIGNAL; 
         }
 //      if (digitalRead(SENSOR_PIR2) == 0) {        
 //        Serial.println("Sensor PIR2 Signal");        
@@ -142,13 +141,13 @@ void blinkAllLeds(int times) {
 void turnOn(int pin) {
   digitalWrite(pin, HIGH);
 }
-void turnOff(int led) {
+void turnOff(int pin) {
   digitalWrite(pin, LOW);
 }
 void sirenBeep(int times) {
     for (int i = 0; i < times; i++) {
         pinMode(SIREN, HIGH);
-        delay(100);
+        delay(1000);
         pinMode(SIREN, LOW);
       }
   }
