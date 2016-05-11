@@ -4,7 +4,7 @@
 #define SENSOR_PIR1 3
 #define SENSOR_PIR2 4
 #define NEW_CONTROL_BUTTON 5 
-#define SIREN 11
+#define SIREN 8
 #define RED_LED 10
 #define GREEN_LED 9
 #define INDEFINIDO -1
@@ -57,7 +57,7 @@ void loop() {
               Serial.println("Alarm On");
               state = ALARM_ON;
               Serial.println(state);
-              sirenBeep(1);
+              //sirenBeep(1);
             }
             //} else if (newControlButtonPressedFor5sec()) {
             //  state = NEW_CONTROL_ADDING;
@@ -70,7 +70,7 @@ void loop() {
               state = ALARM_OFF;
               Serial.println(state);
               turnOff(RED_LED);
-              sirenBeep(2);
+              //sirenBeep(2);
           } else if(signalReceived == SENSOR_SIGNAL) {
               state = ALARM_STARTED;  
               Serial.println(state);
