@@ -58,7 +58,7 @@ void loop() {
               state = ALARM_ON;
               Serial.println(state);
               turnOn(SIREN);
-              delay(1000);
+              delay(300);
               turnOff(SIREN);
             }
             //} else if (newControlButtonPressedFor5sec()) {
@@ -73,7 +73,7 @@ void loop() {
               Serial.println(state);
               turnOff(RED_LED);
               turnOn(SIREN);
-              delay(1000);
+              delay(600);
               turnOff(SIREN);
           } else if(signalReceived == SENSOR_SIGNAL) {
               state = ALARM_STARTED;  
@@ -89,9 +89,10 @@ void loop() {
                 state = ALARM_OFF;
                 Serial.println("Alarm Off");
                 Serial.println(state);
+                delay(600);
                 turnOff(RED_LED);
                 turnOn(SIREN);
-                delay(1000);
+                delay(600);
                 turnOff(SIREN); 
               }
       break;
