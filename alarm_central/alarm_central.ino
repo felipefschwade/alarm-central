@@ -4,9 +4,9 @@
 #define SENSOR_PIR1 3
 #define SENSOR_PIR2 4
 #define NEW_CONTROL_BUTTON 5 
-#define SIREN 8
-#define RED_LED 9
-#define GREEN_LED 10
+#define SIREN 11
+#define RED_LED 10
+#define GREEN_LED 9
 #define INDEFINIDO -1
 unsigned long previousMillis = 0;
 int state;
@@ -32,7 +32,6 @@ void setup()
 {
   initiatePins();
   state = ALARM_OFF;
-  turnOn(GREEN_LED);
   Serial.begin(9600);
   Serial.println("INICIADO!");
   params.spaceMin = 3500;
@@ -52,7 +51,7 @@ void loop() {
   int signalReceived = receivedSignal();
   switch (state) {
       case ALARM_OFF:
-          ledBlink(GREEN_LED);
+          ledBlink(GREEN_LED, 700);
           if (signalReceived == CONTROL_SIGNAL) {
               turnOff(GREEN_LED);
               Serial.println("Alarm On");
@@ -65,7 +64,7 @@ void loop() {
             //}
       break;
       case ALARM_ON:
-          ledBlink(RED_LED);
+          ledBlink(RED_LED, 700);
           if (signalReceived == CONTROL_SIGNAL) {
               Serial.println("Alarm Off");
               state = ALARM_OFF;
@@ -80,8 +79,7 @@ void loop() {
           }
       break;
       case ALARM_STARTED:
-          ledBlink(GREEN_LED);
-          ledBlink(RED_LED);
+          ledBlink(RED_LED, 200);
           if (signalReceived == CONTROL_SIGNAL) {
                 turnOff(SIREN);
                 state = ALARM_OFF;
@@ -90,7 +88,6 @@ void loop() {
                 turnOff(RED_LED);
                 sirenBeep(2);  
               }
-          //ledBlink(RED_LED);
       break;
       case NEW_CONTROL_ADDING:
       break;
@@ -127,9 +124,9 @@ int receivedSignal() {
 //      }
     return INDEFINIDO;
 }
-void ledBlink(int led) {
+void ledBlink(int led, int speed_milis) {
    int state = digitalRead(led);
-   const long interval = 700; 
+   const long interval = speed_milis; 
    unsigned long currentMillis = millis();
     if (currentMillis - previousMillis >= interval) {
       previousMillis = currentMillis;
@@ -145,7 +142,7 @@ void turnOff(int pin) {
 void sirenBeep(int times) {
     for (int i = 0; i < times; i++) {
         pinMode(SIREN, HIGH);
-        delay(500);
+        delay(1500);
         pinMode(SIREN, LOW);
       }
   }
