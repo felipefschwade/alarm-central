@@ -57,7 +57,7 @@ void loop() {
               Serial.println("Alarm On");
               state = ALARM_ON;
               Serial.println(state);
-              //sirenBeep(1);
+              ledBlink(SIREN, 1000);
             }
             //} else if (newControlButtonPressedFor5sec()) {
             //  state = NEW_CONTROL_ADDING;
@@ -70,7 +70,7 @@ void loop() {
               state = ALARM_OFF;
               Serial.println(state);
               turnOff(RED_LED);
-              //sirenBeep(2);
+              ledBlink(SIREN, 2000);
           } else if(signalReceived == SENSOR_SIGNAL) {
               state = ALARM_STARTED;  
               Serial.println(state);
@@ -86,7 +86,7 @@ void loop() {
                 Serial.println("Alarm Off");
                 Serial.println(state);
                 turnOff(RED_LED);
-                sirenBeep(2);  
+                ledBlink(SIREN, 2000);  
               }
       break;
       case NEW_CONTROL_ADDING:
@@ -139,13 +139,6 @@ void turnOn(int pin) {
 void turnOff(int pin) {
   digitalWrite(pin, LOW);
 }
-void sirenBeep(int times) {
-    for (int i = 0; i <= times; i++) {
-        pinMode(SIREN, HIGH);
-        delay(1500);
-        pinMode(SIREN, LOW);
-      }
-  }
 int newControlButtonPressedFor5sec() {
     for (int i = 0; i <= 50; i++) {
         if (digitalRead(NEW_CONTROL_BUTTON == 0)) {
