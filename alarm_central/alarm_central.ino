@@ -8,6 +8,7 @@
 #define RED_LED 9
 #define GREEN_LED 10
 #define INDEFINIDO -1
+unsigned long previousMillis = 0;
 int state;
 enum Status {
     ALARM_OFF,
@@ -102,7 +103,7 @@ void initiatePins() {
     pinMode(RED_LED, OUTPUT);
     pinMode(GREEN_LED, OUTPUT);
 }
-//ReceivedSignal will be improved using switch case, this version is just for testing
+//Return the signal to the controller
 int receivedSignal() {
        if (rfrecv.available()) {
               Serial.println((char*)rfrecv.cmd);
@@ -125,19 +126,14 @@ int receivedSignal() {
     return INDEFINIDO;
 }
 void ledBlink(int led) {
-   digitalWrite(led, HIGH);
-   delay(100);
-   digitalWrite(led, LOW);
-}
-void blinkAllLeds(int times) {
-    for (int i = 0; i < times; i++) {
-      digitalWrite(RED_LED, HIGH);
-      digitalWrite(GREEN_LED, HIGH);
-      delay(200);
-      digitalWrite(RED_LED, LOW);
-      digitalWrite(GREEN_LED, LOW);
+   int state = digitalRead(led);
+   const long interval = 700; 
+   unsigned long currentMillis = millis();
+    if (currentMillis - previousMillis >= interval) {
+      previousMillis = currentMillis;
+      digitalWrite(led, !state);
     }
-  }
+}
 void turnOn(int pin) {
   digitalWrite(pin, HIGH);
 }
@@ -147,7 +143,7 @@ void turnOff(int pin) {
 void sirenBeep(int times) {
     for (int i = 0; i < times; i++) {
         pinMode(SIREN, HIGH);
-        delay(1000);
+        delay(500);
         pinMode(SIREN, LOW);
       }
   }
