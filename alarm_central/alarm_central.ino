@@ -140,7 +140,7 @@ void turnOff(int pin) {
   digitalWrite(pin, LOW);
 }
 void sirenBeep(int times) {
-    for (int i = 0; i < times; i++) {
+    for (int i = 0; i <= times; i++) {
         pinMode(SIREN, HIGH);
         delay(1500);
         pinMode(SIREN, LOW);
