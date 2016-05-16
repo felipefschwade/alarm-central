@@ -59,8 +59,19 @@ void loop() {
               Serial.println(state);
               turnOff(GREEN_LED);
               break;
-            } else if (newControlButtonPressedFor5sec()) {
+            } else if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
               state = NEW_CONTROL_ADDING;
+              Serial.println("New Controll Adding");
+              for (int i=0; i <= 2; i++) {
+                Serial.println(i);
+                turnOn(GREEN_LED);
+                turnOn(RED_LED);
+                delay(300);
+                turnOff(GREEN_LED);
+                turnOff(RED_LED);
+                delay(200);
+              }
+              break;
             }
             ledBlink(GREEN_LED, 700);
       break;
