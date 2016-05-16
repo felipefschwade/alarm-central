@@ -20,7 +20,7 @@ enum Status {
 enum receivedSignal {
     CONTROL_SIGNAL,
     SENSOR_SIGNAL,
-    CONTROL_BUTTON_PRESSED
+    NEW_CONTROL_BUTTON_PRESSED
   };
 const char *sensor = "01010101010101010101010";
 const char *controle = "0110100100110100110100100110110110100100100100100100110100100110110110100100110100110";
@@ -130,6 +130,9 @@ int receivedSignal() {
 //        Serial.println("Sensor PIR2 Signal");        
 //        return SENSOR_SIGNAL;      
 //      }
+    if (digitalRead(NEW_CONTROL_BUTTON) == 0) {
+        return NEW_CONTROL_BUTTON_PRESSED;
+    }
     return INDEFINIDO;
 }
 void ledBlink(int led, int speed_milis) {
