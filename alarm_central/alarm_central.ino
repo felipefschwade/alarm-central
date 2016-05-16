@@ -20,6 +20,7 @@ enum Status {
 enum receivedSignal {
     CONTROL_SIGNAL,
     SENSOR_SIGNAL,
+    CONTROL_BUTTON_PRESSED
   };
 const char *sensor = "01010101010101010101010";
 const char *controle = "0110100100110100110100100110110110100100100100100100110100100110110110100100110100110";
@@ -28,8 +29,7 @@ const char *controle = "01101001001101001101001001101101101001001001001001001101
 SignalPatternParams params;
 RFrecv rfrecv;
 
-void setup()
-{
+void setup() {
   initiatePins();
   state = ALARM_OFF;
   Serial.begin(9600);
@@ -55,14 +55,13 @@ void loop() {
               turnOff(GREEN_LED);
               Serial.println("Alarm On");
               state = ALARM_ON;
+              sirenBeep(1);
               Serial.println(state);
-              turnOn(SIREN);
-              delay(300);
-              turnOff(SIREN);
+              turnOff(GREEN_LED);
+              break;
+            } else if (newControlButtonPressedFor5sec()) {
+              state = NEW_CONTROL_ADDING;
             }
-            //} else if (newControlButtonPressedFor5sec()) {
-            //  state = NEW_CONTROL_ADDING;
-            //}
             ledBlink(GREEN_LED, 700);
       break;
       case ALARM_ON:
@@ -71,10 +70,10 @@ void loop() {
               state = ALARM_OFF;
               Serial.println(state);
               turnOff(RED_LED);
-              turnOn(SIREN);
-              delay(600);
-              turnOff(SIREN);
-          } else if(signalReceived == SENSOR_SIGNAL) {
+              sirenBeep(2);
+              turnOff(RED_LED);
+              break;
+          } else if (signalReceived == SENSOR_SIGNAL) {
               state = ALARM_STARTED;  
               Serial.println(state);
               Serial.println("Alarm STARTED");
@@ -93,6 +92,8 @@ void loop() {
                 turnOn(SIREN);
                 delay(600);
                 turnOff(SIREN); 
+                turnOff(RED_LED);
+                break;
               }
            ledBlink(RED_LED, 200);
       break;
@@ -155,4 +156,9 @@ int newControlButtonPressedFor5sec() {
         }
         delay(100);
     }
+}
+void sirenBeep(int times) {
+      turnOn(SIREN);
+      delay(times * 300);
+      turnOff(SIREN);  
 }
