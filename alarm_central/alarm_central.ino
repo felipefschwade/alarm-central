@@ -24,6 +24,7 @@ enum receivedSignal {
   };
 const char *sensor = "01010101010101010101010";
 const char *controle = "0110100100110100110100100110110110100100100100100100110100100110110110100100110100110";
+const char *controle_novo;
 
 
 SignalPatternParams params;
@@ -109,6 +110,41 @@ void loop() {
            ledBlink(RED_LED, 200);
       break;
       case NEW_CONTROL_ADDING:
+      Serial.println("Adicionando novo Controle");
+      int receivedSignals = 0;
+      const char *sinal1;
+      const char *sinal2;
+      while (receivedSignals <= 2) {
+        if (rfrecv.available() && receivedSignals < 1) {
+          const char *sinal1 = (char*)rfrecv.cmd;
+          Serial.println(sinal1);
+          receivedSignals++;
+          continue;
+        } else if (rfrecv.available()) {
+          const char *sinal2 = (char*)rfrecv.cmd;
+          Serial.println(sinal2);
+          continue;
+        }
+        if (sizeof(sinal1) > 5 && sizeof(sinal2) > 5 && (strncmp(sinal1, sinal2, CMD_SIZE)) == 0) {
+          controle_novo = sinal1;
+          receivedSignals++;
+            for (int i=0; i <= 2; i++) { 
+               turnOn(GREEN_LED);
+               delay(300);
+               turnOff(GREEN_LED);
+               delay(200);
+            }
+          } else if (sizeof(sinal1) > 5 && sizeof(sinal2) > 5) {
+            receivedSignals++;
+            for (int i=0; i <= 2; i++) { 
+               turnOn(RED_LED);
+               delay(300);
+               turnOff(RED_LED);
+               delay(200);
+            }
+          }
+      }
+      state = ALARM_OFF;
       break;
     }
 }
@@ -130,6 +166,10 @@ int receivedSignal() {
                 return SENSOR_SIGNAL;
               }
               if (strncmp((char*)rfrecv.cmd, controle, CMD_SIZE) == 0) {
+                Serial.println("Control Signal");
+                return CONTROL_SIGNAL; 
+              }
+              if (strncmp((char*)rfrecv.cmd, controle_novo, CMD_SIZE) == 0) {
                 Serial.println("Control Signal");
                 return CONTROL_SIGNAL; 
               }
@@ -160,16 +200,6 @@ void turnOn(int pin) {
 }
 void turnOff(int pin) {
   digitalWrite(pin, LOW);
-}
-int newControlButtonPressedFor5sec() {
-    for (int i = 0; i <= 50; i++) {
-        if (digitalRead(NEW_CONTROL_BUTTON == 0)) {
-          return 0;
-        } else if (i == 50){
-          return 1;
-        }
-        delay(100);
-    }
 }
 void sirenBeep(int times) {
       turnOn(SIREN);
