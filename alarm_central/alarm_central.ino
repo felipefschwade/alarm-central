@@ -62,7 +62,7 @@ void loop() {
               break;
             } else if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
               state = NEW_CONTROL_ADDING;
-              Serial.println("New Controll Adding");
+              Serial.println("New Control Adding");
               for (int i=0; i <= 2; i++) {
                 Serial.println(i);
                 turnOn(GREEN_LED);
@@ -110,41 +110,20 @@ void loop() {
            ledBlink(RED_LED, 200);
       break;
       case NEW_CONTROL_ADDING:
-      Serial.println("Adicionando novo Controle");
-      int receivedSignals = 0;
-      const char *sinal1;
-      const char *sinal2;
-      while (receivedSignals <= 2) {
-        if (rfrecv.available() && receivedSignals < 1) {
-          const char *sinal1 = (char*)rfrecv.cmd;
-          Serial.println(sinal1);
-          receivedSignals++;
-          continue;
-        } else if (rfrecv.available()) {
-          const char *sinal2 = (char*)rfrecv.cmd;
-          Serial.println(sinal2);
-          continue;
+      if (rfrecv.available()) {
+       controle_novo = (char*)rfrecv.cmd;
+       Serial.println(controle_novo);
+       state = ALARM_OFF;
+       for (int i=0; i <= 2; i++) {
+          Serial.println(i);
+          turnOn(GREEN_LED);
+          delay(300);
+          turnOff(GREEN_LED);
+          delay(200);
         }
-        if (sizeof(sinal1) > 5 && sizeof(sinal2) > 5 && (strncmp(sinal1, sinal2, CMD_SIZE)) == 0) {
-          controle_novo = sinal1;
-          receivedSignals++;
-            for (int i=0; i <= 2; i++) { 
-               turnOn(GREEN_LED);
-               delay(300);
-               turnOff(GREEN_LED);
-               delay(200);
-            }
-          } else if (sizeof(sinal1) > 5 && sizeof(sinal2) > 5) {
-            receivedSignals++;
-            for (int i=0; i <= 2; i++) { 
-               turnOn(RED_LED);
-               delay(300);
-               turnOff(RED_LED);
-               delay(200);
-            }
-          }
+      } else if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
+        state = ALARM_OFF;
       }
-      state = ALARM_OFF;
       break;
     }
 }
@@ -161,6 +140,7 @@ void initiatePins() {
 int receivedSignal() {
        if (rfrecv.available()) {
               Serial.println((char*)rfrecv.cmd);
+              Serial.println();
               if (strncmp((char*)rfrecv.cmd, sensor, CMD_SIZE) == 0) {
                 Serial.println("Door/Window Open Sensor Signal!");
                 return SENSOR_SIGNAL;
@@ -170,7 +150,7 @@ int receivedSignal() {
                 return CONTROL_SIGNAL; 
               }
               if (strncmp((char*)rfrecv.cmd, controle_novo, CMD_SIZE) == 0) {
-                Serial.println("Control Signal");
+                Serial.println("New Control Signal");
                 return CONTROL_SIGNAL; 
               }
           }
