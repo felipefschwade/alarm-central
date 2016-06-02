@@ -63,33 +63,17 @@ void loop() {
       break;
       case ALARM_ON:
           if (signalReceived == CONTROL_SIGNAL) {
-              Serial.println("Alarm Off");
-              state = ALARM_OFF;
-              Serial.println(state);
-              turnOff(RED_LED);
-              sirenBeep(2);
-              turnOff(RED_LED);
+              setAlarmOff();
               break;
           } else if (signalReceived == SENSOR_SIGNAL) {
-              state = ALARM_STARTED;  
-              Serial.println(state);
-              Serial.println("Alarm STARTED");
-              turnOn(SIREN);
+              startAlarm();
+              break;
           }
           ledBlink(RED_LED, 700);
       break;
       case ALARM_STARTED:
           if (signalReceived == CONTROL_SIGNAL) {
-                turnOff(SIREN);
-                state = ALARM_OFF;
-                Serial.println("Alarm Off");
-                Serial.println(state);
-                delay(600);
-                turnOff(RED_LED);
-                turnOn(SIREN);
-                delay(600);
-                turnOff(SIREN); 
-                turnOff(RED_LED);
+                setAlarmOff();
                 break;
               }
            ledBlink(RED_LED, 200);
@@ -194,4 +178,21 @@ void setNewControllAddingState() {
         turnOff(RED_LED);
         delay(200);
       }
+}
+void setAlarmOff() {
+    Serial.println("Alarm Off");
+    turnOff(SIREN); 
+    state = ALARM_OFF;
+    Serial.println(state);
+    turnOff(RED_LED);
+    sirenBeep(2);
+    turnOff(RED_LED);
+    //Delay to avoid an accidental alarm activitation while the control button is pressed
+    delay(300);
+}
+void startAlarm() {
+    state = ALARM_STARTED;  
+    Serial.println(state);
+    Serial.println("Alarm STARTED");
+    turnOn(SIREN);
 }
