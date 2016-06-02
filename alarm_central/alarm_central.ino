@@ -182,13 +182,12 @@ void setNewControllAddingState() {
 void setAlarmOff() {
     Serial.println("Alarm Off");
     turnOff(SIREN); 
+    //Delay to avoid an accidental alarm activitation while the control button is pressed
+    delay(300);
     state = ALARM_OFF;
-    Serial.println(state);
     turnOff(RED_LED);
     sirenBeep(2);
     turnOff(RED_LED);
-    //Delay to avoid an accidental alarm activitation while the control button is pressed
-    delay(300);
 }
 void startAlarm() {
     state = ALARM_STARTED;  
