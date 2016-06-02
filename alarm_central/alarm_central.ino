@@ -53,12 +53,7 @@ void loop() {
   switch (state) {
       case ALARM_OFF:
           if (signalReceived == CONTROL_SIGNAL) {
-              turnOff(GREEN_LED);
-              Serial.println("Alarm On");
-              state = ALARM_ON;
-              sirenBeep(1);
-              Serial.println(state);
-              turnOff(GREEN_LED);
+              setAlarmStarted();
               break;
             } else if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
               state = NEW_CONTROL_ADDING;
@@ -110,20 +105,20 @@ void loop() {
            ledBlink(RED_LED, 200);
       break;
       case NEW_CONTROL_ADDING:
-      if (rfrecv.available()) {
-       controle_novo = (char*)rfrecv.cmd;
-       Serial.println(controle_novo);
-       state = ALARM_OFF;
-       for (int i=0; i <= 2; i++) {
-          Serial.println(i);
-          turnOn(GREEN_LED);
-          delay(300);
-          turnOff(GREEN_LED);
-          delay(200);
-        }
-      } else if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
-        state = ALARM_OFF;
-      }
+//      if (rfrecv.available()) {
+//       controle_novo = (char*)rfrecv.cmd;
+//       Serial.println(controle_novo);
+//       state = ALARM_OFF;
+//       for (int i=0; i <= 2; i++) {
+//          Serial.println(i);
+//          turnOn(GREEN_LED);
+//          delay(300);
+//          turnOff(GREEN_LED);
+//          delay(200);
+//        }
+//      } else if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
+//        state = ALARM_OFF;
+//      }
       break;
     }
 }
@@ -185,4 +180,12 @@ void sirenBeep(int times) {
       turnOn(SIREN);
       delay(times * 300);
       turnOff(SIREN);  
+}
+void setAlarmStarted() {
+    turnOff(GREEN_LED);
+    Serial.println("Alarm On");
+    state = ALARM_ON;
+    sirenBeep(1);
+    Serial.println(state);
+    turnOff(GREEN_LED);  
 }
