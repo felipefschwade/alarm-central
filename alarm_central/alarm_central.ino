@@ -109,6 +109,8 @@ void loop() {
        if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
           state = ALARM_OFF;
           Serial.println("Alarm Off");
+          //Delay for the user don't accidetaly get again into this state
+          delay(1000);
        }
       break;
     }
