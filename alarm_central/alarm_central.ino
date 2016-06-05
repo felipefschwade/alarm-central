@@ -8,8 +8,10 @@
 #define RED_LED 10
 #define GREEN_LED 9
 #define INDEFINIDO -1
+
 unsigned long previousMillis = 0;
 int state;
+
 enum Status {
     ALARM_OFF,
     ALARM_ON,
@@ -21,7 +23,8 @@ enum receivedSignal {
     CONTROL_SIGNAL,
     SENSOR_SIGNAL,
     NEW_CONTROL_BUTTON_PRESSED
-  };
+};
+
 const char *sensor = "01010101010101010101010";
 const char *controle = "0110100100110100110100100110110110100100100100100100110100100110110110100100110100110";
 const char *controle_novo;
@@ -50,52 +53,49 @@ void setup() {
 
 void loop() {
   int signalReceived = receivedSignal();
+  
   switch (state) {
-      case ALARM_OFF:
-          if (signalReceived == CONTROL_SIGNAL) {
-              setAlarmOn();
-              break;
-            } else if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
-              setNewControllAddingState();
-              break;
-            }
-            ledBlink(GREEN_LED, 700);
+    case ALARM_OFF:
+      if (signalReceived == CONTROL_SIGNAL) {
+        setAlarmOn();
+        break;
+      } else if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
+        setNewControllAddingState();
+        break;
+      }
+    
+      ledBlink(GREEN_LED, 700);
       break;
-      case ALARM_ON:
-          if (signalReceived == CONTROL_SIGNAL) {
-              setAlarmOff();
-              break;
-          } else if (signalReceived == SENSOR_SIGNAL) {
-              startAlarm();
-              break;
-          }
-          ledBlink(RED_LED, 700);
+    
+    case ALARM_ON:
+      if (signalReceived == CONTROL_SIGNAL) {
+        setAlarmOff();
+        break;
+      } else if (signalReceived == SENSOR_SIGNAL) {
+        startAlarm();
+        break;
+      }
+      
+      ledBlink(RED_LED, 700);
       break;
+      
       case ALARM_STARTED:
-          if (signalReceived == CONTROL_SIGNAL) {
-                setAlarmOff();
-                break;
-              }
-           ledBlink(RED_LED, 200);
-      break;
+        if (signalReceived == CONTROL_SIGNAL) {
+          setAlarmOff();
+          break;
+        }
+        
+        ledBlink(RED_LED, 200);
+        break;
+      
       case NEW_CONTROL_ADDING:
-//      if (rfrecv.available()) {
-//       controle_novo = (char*)rfrecv.cmd;
-//       Serial.println(controle_novo);
-//       state = ALARM_OFF;
-//       for (int i=0; i <= 2; i++) {
-//          Serial.println(i);
-//          turnOn(GREEN_LED);
-//          delay(300);
-//          turnOff(GREEN_LED);
-//          delay(200);
-  //        }
-       if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
+        if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
           state = ALARM_OFF;
           Serial.println("Alarm Off");
           //Delay for the user don't accidetaly get again into this state
           delay(1000);
-       }
+        }
+        
       break;
     }
 }
@@ -166,20 +166,25 @@ void setAlarmOn() {
     Serial.println(state);
     turnOff(GREEN_LED);  
 }
+
 void setNewControllAddingState() {
-      state = NEW_CONTROL_ADDING;
-      Serial.println("New Control Adding");
-      for (int i=0; i <= 2; i++) {
-        Serial.println(i);
-        turnOn(GREEN_LED);
-        turnOn(RED_LED);
-        delay(300);
-        turnOff(GREEN_LED);
-        turnOff(RED_LED);
-        delay(200);
-      }
+    //modify state glabal variable
+    state = NEW_CONTROL_ADDING;
+    Serial.println("New Control Adding");
+    
+    for (int i=0; i <= 2; i++) {
+      Serial.println(i);
+      turnOn(GREEN_LED);
+      turnOn(RED_LED);
+      delay(300);
+      turnOff(GREEN_LED);
+      turnOff(RED_LED);
+      delay(200);
+    }
+    
 }
 void setAlarmOff() {
+    
     Serial.println("Alarm Off");
     turnOff(SIREN); 
     //Delay to avoid an accidental alarm activitation while the control button is pressed
