@@ -1,5 +1,4 @@
-
-#include <RFremote.h>
+#include <RCSwitch.h>
 //By default, the RF SENSOR pin is definited in RFremote.h on pin2
 #define SENSOR_PIR1 3
 #define SENSOR_PIR2 4
@@ -22,30 +21,19 @@ enum receivedSignal {
     SENSOR_SIGNAL,
     NEW_CONTROL_BUTTON_PRESSED
   };
-const char *sensor = "01010101010101010101010";
-const char *controle = "0110100100110100110100100110110110100100100100100100110100100110110110100100110100110";
-const char *controle_novo;
+
+long int controle = 156108005;
 
 
-SignalPatternParams params;
-RFrecv rfrecv;
+RCSwitch mySwitch = RCSwitch();
 
 void setup() {
   initiatePins();
   state = ALARM_OFF;
   Serial.begin(9600);
   Serial.println("INICIADO!");
-  params.spaceMin = 3500;
-  params.spaceMax = 17000;
-  params.dotMin = 300;
-  params.dotMax = 600;
-  params.traceMin = 700;
-  params.traceMax = 1050;
-  params.skipFirst = 0;
-  params.skipLast = 0;
+  mySwitch.enableReceive(0);
 
-  rfrecv = RFrecv(&params);
-  rfrecv.begin();
 }
 
 void loop() {
@@ -110,25 +98,18 @@ void initiatePins() {
 }
 //Return the signal to the controller
 int receivedSignal() {
-       if (rfrecv.available()) {
-              Serial.println((char*)rfrecv.cmd);
+       if (mySwitch.available()) {
+              Serial.println(mySwitch.getReceivedValue());
               Serial.println();
-              if (strncmp((char*)rfrecv.cmd, sensor, CMD_SIZE) == 0) {
-                Serial.println("Door/Window Open Sensor Signal!");
-                return SENSOR_SIGNAL;
-              }
-              if (strncmp((char*)rfrecv.cmd, controle, CMD_SIZE) == 0) {
+              if (controle == mySwitch.getReceivedValue()) {
                 Serial.println("Control Signal");
-                return CONTROL_SIGNAL; 
-              }
-              if (strncmp((char*)rfrecv.cmd, controle_novo, CMD_SIZE) == 0) {
-                Serial.println("New Control Signal");
+                mySwitch.resetAvailable();
                 return CONTROL_SIGNAL; 
               }
           }
-     if (digitalRead(SENSOR_PIR1) == 0) {
-           return SENSOR_SIGNAL; 
-        }
+//     if (digitalRead(SENSOR_PIR1) == 0) {
+//           return SENSOR_SIGNAL; 
+//        }
 //      if (digitalRead(SENSOR_PIR2) == 0) {        
 //        Serial.println("Sensor PIR2 Signal");        
 //        return SENSOR_SIGNAL;      
@@ -179,6 +160,11 @@ void setNewControllAddingState() {
         delay(200);
       }
 }
+/** 
+*
+*
+*
+**/
 void setAlarmOff() {
     Serial.println("Alarm Off");
     turnOff(SIREN); 
