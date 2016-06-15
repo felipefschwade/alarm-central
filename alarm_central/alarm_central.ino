@@ -106,6 +106,7 @@ int receivedSignal() {
                 mySwitch.resetAvailable();
                 return CONTROL_SIGNAL; 
               }
+              mySwitch.resetAvailable();
           }
 //     if (digitalRead(SENSOR_PIR1) == 0) {
 //           return SENSOR_SIGNAL; 
