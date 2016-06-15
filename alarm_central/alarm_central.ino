@@ -145,6 +145,7 @@ void setAlarmOn() {
     state = ALARM_ON;
     sirenBeep(1);
     Serial.println(state);
+    delay(300);
     turnOff(GREEN_LED);  
 }
 void setNewControllAddingState() {
