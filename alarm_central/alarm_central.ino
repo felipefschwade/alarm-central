@@ -42,7 +42,8 @@ void SDReadFailed();
 #define INDEFINIDO -1
 
 //Defining all global scope variables
-
+//The new control variable
+long int new_control;
 //The timer to use on Blinks.
 unsigned long previousMillis = 0;
 //The state control variable
@@ -80,7 +81,7 @@ void setup() {
   Serial.println("INICIADO!");
   //If the card isn't located the software will get into sleep mode.
   if (!SD.begin(SDCARD)) {
-    
+    SDReadFailed();
   }
   mySwitch.enableReceive(0);
   myFile = SD.open("codes.txt", FILE_WRITE);
@@ -131,11 +132,23 @@ void loop() {
               }
            ledBlink(RED_LED, 200);
       break;
+      //Reset your arduino after adding a new control.
       case NEW_CONTROL_ADDING:
-      if (mySwitch.available()) {
-       controle_novo = mySwitch.getReceivedValue();
-       Serial.println(controle_novo);
-       if
+        if (mySwitch.available()) {
+         new_control = mySwitch.getReceivedValue();
+         Serial.println(new_control);
+         myFile = SD.open("codes.txt", FILE_WRITE);
+        // if the file opened okay, write to it
+        if (myFile) {
+          Serial.print("Writing the new code into the codes.txt...");
+          myFile.println(new_control);
+          myFile.close();
+          Serial.println("Control save with success.");
+        } else {
+          //Lock the file again if something went wrong
+          SDOpenFileFailed();
+        }
+       //Make a loop to indicate using led blink that the control were successfull saved
        for (int i=0; i <= 2; i++) {
           Serial.println(i);
           //Proposital delay for avoid a accindetal Alarm Set while adding a control
@@ -152,7 +165,8 @@ void loop() {
           delay(1000);
        }
       break;
-    }
+    } 
+  }
 }
 
 void initiatePins() {
@@ -179,10 +193,10 @@ int receivedSignal() {
 //     if (digitalRead(SENSOR_PIR1) == 0) {
 //           return SENSOR_SIGNAL; 
 //        }
-    if (digitalRead(NEW_CONTROL_BUTTON) == 0) {
-        return NEW_CONTROL_BUTTON_PRESSED;
-    }
-    return INDEFINIDO;
+      if (digitalRead(NEW_CONTROL_BUTTON) == 0) {
+          return NEW_CONTROL_BUTTON_PRESSED;
+      }
+      return INDEFINIDO;
 }
 
 void ledBlink(int led, int speed_milis) {
