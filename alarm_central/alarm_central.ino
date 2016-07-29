@@ -9,10 +9,27 @@
 #include <SD.h>
 #include <SPI.h>
 #include <RCSwitch.h>
-//By default, the RF SENSOR pin is definited in RFremote.h on pin2
+/*
+  @TODO a personal .h file for the library
+*/
+
+//Defining the functions used
+void initiatePins();
+int receivedSignal();
+void setAlarmOff();
+void ledBlink(int led, int speed_milis);
+void turnOn(int pin);
+void turnOff(int pin);
+void sirenBeep(int times);
+void setAlarmOn();
+void setNewControllAddingState();
+void setAlarmOff();
+void startAlarm();
+
+//By default, the RF SENSOR pin is definited in RCswitch library on pin2
 /*
   @TODO
-  A function that defines manually the pins
+  A function that defines the pins in a easier way
 */
 #define SENSOR_PIR1 3
 #define SDCARD 4
@@ -74,7 +91,7 @@ void setup() {
     // read from the file until there's nothing else in it:
     int i = 0;
     while (myFile.available()) {
-     controls[i]myFile.read();
+     controls[i] = myFile.read();
      i++;
     }
     // close the file:
@@ -82,6 +99,7 @@ void setup() {
   } else {
     // if the file didn't open, print an error and stay:
     Serial.println("Error opening codes.txt, please review your SD Card");
+    
   }
 }
 
@@ -149,7 +167,7 @@ int receivedSignal() {
        if (mySwitch.available()) {
               Serial.println(mySwitch.getReceivedValue());
               Serial.println();
-              for (int i=0; i < sizeof(controles); i++) {
+              for (int i=0; i < sizeof(controls); i++) {
                   if (controles[i] == mySwitch.getReceivedValue()) {
                   Serial.println("Control Signal");
                   mySwitch.resetAvailable();
@@ -181,59 +199,4 @@ void turnOn(int pin) {
   digitalWrite(pin, HIGH);
 }
 
-void turnOff(int pin) {
-  digitalWrite(pin, LOW);
-}
-
-void sirenBeep(int times) {
-      turnOn(SIREN);
-      delay(times * 300);
-      turnOff(SIREN);  
-}
-
-void setAlarmOn() {
-    turnOff(GREEN_LED);
-    Serial.println("Alarm On");
-    state = ALARM_ON;
-    sirenBeep(1);
-    Serial.println(state);
-    delay(300);
-    turnOff(GREEN_LED);  
-}
-
-void setNewControllAddingState() {
-      state = NEW_CONTROL_ADDING;
-      Serial.println("New Control Adding");
-      for (int i=0; i <= 2; i++) {
-        Serial.println(i);
-        turnOn(GREEN_LED);
-        turnOn(RED_LED);
-        delay(300);
-        turnOff(GREEN_LED);
-        turnOff(RED_LED);
-        delay(200);
-      }
-}
-/** 
-*
-*
-*
-**/
-void setAlarmOff() {
-    Serial.println("Alarm Off");
-    turnOff(SIREN); 
-    //Delay to avoid an accidental alarm activitation while the control button is pressed
-    delay(300);
-    state = ALARM_OFF;
-    turnOff(RED_LED);
-    sirenBeep(2);
-    turnOff(RED_LED);
-}
-
-void startAlarm() {
-    state = ALARM_STARTED;  
-    Serial.println(state);
-    Serial.println("Alarm STARTED");
-    turnOn(SIREN);
-}
 
