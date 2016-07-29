@@ -99,7 +99,8 @@ void setup() {
   } else {
     // if the file didn't open, print an error and stay:
     Serial.println("Error opening codes.txt, please review your SD Card");
-    
+    turnOn(GREEN_LED);
+    return;
   }
 }
 
@@ -137,6 +138,7 @@ void loop() {
       if (mySwitch.available()) {
        controle_novo = mySwitch.getReceivedValue();
        Serial.println(controle_novo);
+       if
        for (int i=0; i <= 2; i++) {
           Serial.println(i);
           //Proposital delay for avoid a accindetal Alarm Set while adding a control
