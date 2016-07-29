@@ -134,17 +134,18 @@ void loop() {
            ledBlink(RED_LED, 200);
       break;
       case NEW_CONTROL_ADDING:
-//      if (rfrecv.available()) {
-//       controle_novo = (char*)rfrecv.cmd;
-//       Serial.println(controle_novo);
-//       state = ALARM_OFF;
-//       for (int i=0; i <= 2; i++) {
-//          Serial.println(i);
-//          turnOn(GREEN_LED);
-//          delay(300);
-//          turnOff(GREEN_LED);
-//          delay(200);
-  //        }
+      if (mySwitch.available()) {
+       controle_novo = mySwitch.getReceivedValue();
+       Serial.println(controle_novo);
+       for (int i=0; i <= 2; i++) {
+          Serial.println(i);
+          //Proposital delay for avoid a accindetal Alarm Set while adding a control
+          turnOn(GREEN_LED);
+          delay(300);
+          turnOff(GREEN_LED);
+          delay(200);
+          state = ALARM_OFF;
+          }
        if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
           state = ALARM_OFF;
           Serial.println("Alarm Off");
