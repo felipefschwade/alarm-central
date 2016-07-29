@@ -199,4 +199,58 @@ void turnOn(int pin) {
   digitalWrite(pin, HIGH);
 }
 
+void turnOff(int pin) {
+  digitalWrite(pin, LOW);
+}
 
+void sirenBeep(int times) {
+      turnOn(SIREN);
+      delay(times * 300);
+      turnOff(SIREN);  
+}
+
+void setAlarmOn() {
+    turnOff(GREEN_LED);
+    Serial.println("Alarm On");
+    state = ALARM_ON;
+    sirenBeep(1);
+    Serial.println(state);
+    delay(300);
+    turnOff(GREEN_LED);  
+}
+
+void setNewControllAddingState() {
+      state = NEW_CONTROL_ADDING;
+      Serial.println("New Control Adding");
+      for (int i=0; i <= 2; i++) {
+        Serial.println(i);
+        turnOn(GREEN_LED);
+        turnOn(RED_LED);
+        delay(300);
+        turnOff(GREEN_LED);
+        turnOff(RED_LED);
+        delay(200);
+      }
+}
+/** 
+*
+*
+*
+**/
+void setAlarmOff() {
+    Serial.println("Alarm Off");
+    turnOff(SIREN); 
+    //Delay to avoid an accidental alarm activitation while the control button is pressed
+    delay(300);
+    state = ALARM_OFF;
+    turnOff(RED_LED);
+    sirenBeep(2);
+    turnOff(RED_LED);
+}
+
+void startAlarm() {
+    state = ALARM_STARTED;  
+    Serial.println(state);
+    Serial.println("Alarm STARTED");
+    turnOn(SIREN);
+}
