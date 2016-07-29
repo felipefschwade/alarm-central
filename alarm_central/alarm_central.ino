@@ -48,7 +48,7 @@ File myFile;
 
 //TODO Auto control codes generation
 //Here you put the quantity of controls that you want in you 
-long int controles [21];
+long int controls [21];
 
 //Defining the RF433Mhz decoder library
 RCSwitch mySwitch = RCSwitch();
@@ -68,32 +68,20 @@ void setup() {
   mySwitch.enableReceive(0);
   myFile = SD.open("codes.txt", FILE_WRITE);
 
-  // if the file opened okay, write to it:
-  if (myFile) {
-    Serial.print("Writing to test.txt...");
-    myFile.println("testing 1, 2, 3.");
-    // close the file:
-    myFile.close();
-    Serial.println("done.");
-  } else {
-    // if the file didn't open, print an error:
-    Serial.println("error opening test.txt");
-  }
-
-  // re-open the file for reading:
+  // Open the file for reading:
   myFile = SD.open("codes.txt");
   if (myFile) {
-    Serial.println("codes.txt:");
-
     // read from the file until there's nothing else in it:
+    int i = 0;
     while (myFile.available()) {
-      Serial.write(myFile.read());
+     controls[i]myFile.read();
+     i++;
     }
     // close the file:
     myFile.close();
   } else {
-    // if the file didn't open, print an error:
-    Serial.println("error opening test.txt");
+    // if the file didn't open, print an error and stay:
+    Serial.println("Error opening codes.txt, please review your SD Card");
   }
 }
 
