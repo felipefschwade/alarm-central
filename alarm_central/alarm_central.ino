@@ -25,6 +25,8 @@ void setAlarmOn();
 void setNewControllAddingState();
 void setAlarmOff();
 void startAlarm();
+void SDOpenFileFailed();
+void SDReadFailed();
 
 //By default, the RF SENSOR pin is definited in RCswitch library on pin2
 /*
@@ -78,9 +80,7 @@ void setup() {
   Serial.println("INICIADO!");
   //If the card isn't located the software will get into sleep mode.
   if (!SD.begin(SDCARD)) {
-    Serial.println("Initialization Failed! Please verify your SD Card and try Again");
-    digitalWrite(RED_LED, HIGH);
-    return;
+    
   }
   mySwitch.enableReceive(0);
   myFile = SD.open("codes.txt", FILE_WRITE);
@@ -97,10 +97,7 @@ void setup() {
     // close the file:
     myFile.close();
   } else {
-    // if the file didn't open, print an error and stay:
-    Serial.println("Error opening codes.txt, please review your SD Card");
-    turnOn(GREEN_LED);
-    return;
+    SDOpenFileFailed();
   }
 }
 
@@ -256,4 +253,18 @@ void startAlarm() {
     Serial.println(state);
     Serial.println("Alarm STARTED");
     turnOn(SIREN);
+}
+
+//Lock the code execution and turn on the green led for show a file oppening error.
+void SDOpenFileFailed() {
+  // if the file didn't open, print an error and stay:
+    Serial.println("Error opening codes.txt, please review your SD Card");
+    turnOn(GREEN_LED);
+    return;
+}
+//Lock the code execution and turn on the red led for show a SDCard oppening error.
+void SDReadFailed() {
+    Serial.println("Initialization Failed! Please verify your SD Card and try Again");
+    digitalWrite(RED_LED, HIGH);
+    return;
 }
