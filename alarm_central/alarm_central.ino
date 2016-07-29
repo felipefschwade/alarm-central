@@ -168,7 +168,7 @@ int receivedSignal() {
               Serial.println(mySwitch.getReceivedValue());
               Serial.println();
               for (int i=0; i < sizeof(controls); i++) {
-                  if (controles[i] == mySwitch.getReceivedValue()) {
+                  if (controls[i] == mySwitch.getReceivedValue()) {
                   Serial.println("Control Signal");
                   mySwitch.resetAvailable();
                   return CONTROL_SIGNAL; 
