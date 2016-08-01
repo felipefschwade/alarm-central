@@ -43,7 +43,7 @@ void SDReadFailed();
 
 //Defining all global scope variables
 //The new control variable
-long int new_control;
+String new_control;
 //The timer to use on Blinks.
 unsigned long previousMillis = 0;
 //The state control variable
@@ -68,7 +68,7 @@ File myFile;
 
 //TODO Auto control codes generation
 //Here you put the quantity of controls that you want in you 
-long int controls [21];
+String controls [21];
 
 //Defining the RF433Mhz decoder library
 RCSwitch mySwitch = RCSwitch();
@@ -79,9 +79,11 @@ void setup() {
   state = ALARM_OFF;
   Serial.begin(9600);
   Serial.println("INICIADO!");
+  Serial.println(sizeof(controls));
   //If the card isn't located the software will get into sleep mode.
   if (!SD.begin(SDCARD)) {
     SDReadFailed();
+    return;
   }
   mySwitch.enableReceive(0);
   myFile = SD.open("codes.txt", FILE_WRITE);
@@ -93,12 +95,15 @@ void setup() {
     int i = 0;
     while (myFile.available()) {
      controls[i] = myFile.read();
+     Serial.println(myFile.read());
+     Serial.println(controls[i]);
      i++;
     }
     // close the file:
     myFile.close();
   } else {
     SDOpenFileFailed();
+    return;
   }
 }
 
@@ -135,35 +140,34 @@ void loop() {
       //Reset your arduino after adding a new control.
       case NEW_CONTROL_ADDING:
         if (mySwitch.available()) {
-         new_control = mySwitch.getReceivedValue();
+         new_control = String(mySwitch.getReceivedValue());
          Serial.println(new_control);
+         mySwitch.resetAvailable();
          myFile = SD.open("codes.txt", FILE_WRITE);
         // if the file opened okay, write to it
         if (myFile) {
           Serial.print("Writing the new code into the codes.txt...");
           myFile.println(new_control);
           myFile.close();
-          Serial.println("Control save with success.");
+          Serial.println("Control Code save with success.");
+          //Make a loop to indicate using led blink that the control were successfull saved
+          for (int i=0; i <= 2; i++) {
+            //Proposital delay for avoid a accindetal Alarm Set while adding a control
+            turnOn(GREEN_LED);
+            delay(300);
+            turnOff(GREEN_LED);
+            delay(200);
+            }
         } else {
           //Lock the file again if something went wrong
           SDOpenFileFailed();
         }
-       //Make a loop to indicate using led blink that the control were successfull saved
-       for (int i=0; i <= 2; i++) {
-          Serial.println(i);
-          //Proposital delay for avoid a accindetal Alarm Set while adding a control
-          turnOn(GREEN_LED);
-          delay(300);
-          turnOff(GREEN_LED);
-          delay(200);
-          state = ALARM_OFF;
-          }
        if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
-          state = ALARM_OFF;
-          Serial.println("Alarm Off");
           //Delay for the user don't accidetaly get again into this state
           delay(1000);
        }
+      Serial.println("Alarm Off");
+      state = ALARM_OFF;
       break;
     } 
   }
@@ -181,12 +185,14 @@ int receivedSignal() {
        if (mySwitch.available()) {
               Serial.println(mySwitch.getReceivedValue());
               Serial.println();
-              for (int i=0; i < sizeof(controls); i++) {
-                  if (controls[i] == mySwitch.getReceivedValue()) {
-                  Serial.println("Control Signal");
-                  mySwitch.resetAvailable();
-                  return CONTROL_SIGNAL; 
-                }
+              for (int i=0; i < 21; i++) {
+                  Serial.println(i);
+                  Serial.println(controls[i]);
+                  if (controls[i] != NULL && controls[i] == String(mySwitch.getReceivedValue())) {
+                    Serial.println("Control Signal");
+                    mySwitch.resetAvailable();
+                    return CONTROL_SIGNAL; 
+                  }
               }
               mySwitch.resetAvailable();
           }
@@ -274,11 +280,9 @@ void SDOpenFileFailed() {
   // if the file didn't open, print an error and stay:
     Serial.println("Error opening codes.txt, please review your SD Card");
     turnOn(GREEN_LED);
-    return;
 }
 //Lock the code execution and turn on the red led for show a SDCard oppening error.
 void SDReadFailed() {
     Serial.println("Initialization Failed! Please verify your SD Card and try Again");
     digitalWrite(RED_LED, HIGH);
-    return;
 }
