@@ -83,7 +83,6 @@ void setup() {
   //If the card isn't located the software will get into sleep mode.
   if (!SD.begin(SDCARD)) {
     SDReadFailed();
-    return;
   }
   mySwitch.enableReceive(0);
   myFile = SD.open("codes.txt", FILE_WRITE);
@@ -94,7 +93,7 @@ void setup() {
     // read from the file until there's nothing else in it:
     int i = 0;
     while (myFile.available()) {
-     controls[i] = myFile.read();
+     controls[i] = String(myFile.read());
      Serial.println(myFile.read());
      Serial.println(controls[i]);
      i++;
@@ -103,7 +102,6 @@ void setup() {
     myFile.close();
   } else {
     SDOpenFileFailed();
-    return;
   }
 }
 
@@ -280,9 +278,11 @@ void SDOpenFileFailed() {
   // if the file didn't open, print an error and stay:
     Serial.println("Error opening codes.txt, please review your SD Card");
     turnOn(GREEN_LED);
+    delay(999999);
 }
 //Lock the code execution and turn on the red led for show a SDCard oppening error.
 void SDReadFailed() {
     Serial.println("Initialization Failed! Please verify your SD Card and try Again");
     digitalWrite(RED_LED, HIGH);
+    delay(999999);
 }
