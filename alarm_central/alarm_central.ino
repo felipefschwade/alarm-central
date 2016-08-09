@@ -43,7 +43,7 @@ void SDReadFailed();
 
 //Defining all global scope variables
 //The new control variable
-String new_control;
+long int new_control;
 //The timer to use on Blinks.
 unsigned long previousMillis = 0;
 //The state control variable
@@ -68,7 +68,7 @@ File myFile;
 
 //TODO Auto control codes generation
 //Here you put the quantity of controls that you want in you 
-String controls [21];
+long int controls [21];
 
 //Defining the RF433Mhz decoder library
 RCSwitch mySwitch = RCSwitch();
@@ -79,7 +79,6 @@ void setup() {
   state = ALARM_OFF;
   Serial.begin(9600);
   Serial.println("INICIADO!");
-  Serial.println(sizeof(controls));
   //If the card isn't located the software will get into sleep mode.
   if (!SD.begin(SDCARD)) {
     SDReadFailed();
@@ -93,8 +92,8 @@ void setup() {
     // read from the file until there's nothing else in it:
     int i = 0;
     while (myFile.available()) {
-     controls[i] = String(myFile.read());
-     Serial.println(myFile.read());
+     Serial.println("Lendo o arquivo");
+     controls[i] = myFile.parseInt();
      Serial.println(controls[i]);
      i++;
     }
@@ -138,7 +137,7 @@ void loop() {
       //Reset your arduino after adding a new control.
       case NEW_CONTROL_ADDING:
         if (mySwitch.available()) {
-         new_control = String(mySwitch.getReceivedValue());
+         new_control = mySwitch.getReceivedValue();
          Serial.println(new_control);
          mySwitch.resetAvailable();
          myFile = SD.open("codes.txt", FILE_WRITE);
@@ -186,7 +185,7 @@ int receivedSignal() {
               for (int i=0; i < 21; i++) {
                   Serial.println(i);
                   Serial.println(controls[i]);
-                  if (controls[i] != NULL && controls[i] == String(mySwitch.getReceivedValue())) {
+                  if (controls[i] != NULL && controls[i] == mySwitch.getReceivedValue()) {
                     Serial.println("Control Signal");
                     mySwitch.resetAvailable();
                     return CONTROL_SIGNAL; 
