@@ -131,6 +131,7 @@ void loop() {
           myFile.println(new_control);
           myFile.close();
           Serial.println("Control Code save with success.");
+          loadData();
           //Make a loop to indicate using led blink that the control were successfull saved
           for (int i=0; i <= 2; i++) {
             //Proposital delay for avoid a accindetal Alarm Set while adding a control
@@ -138,9 +139,8 @@ void loop() {
             delay(300);
             turnOff(GREEN_LED);
             delay(200);
-            loadData();
             flag = 1;
-            }
+           }
         } else {
           //Lock the file again if something went wrong
           SDOpenFileFailed(); 
