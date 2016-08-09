@@ -75,15 +75,15 @@ long int controls [21];
 RCSwitch mySwitch = RCSwitch();
 
 void setup() {
-  if (!SD.begin(SDCARD)) {
-    SDReadFailed();
-  }
+  Serial.begin(9600);
+  Serial.println("INICIADO!");
   initiatePins();
   mySwitch.enableReceive(0);
   state = ALARM_OFF;
-  Serial.begin(9600);
-  Serial.println("INICIADO!");
   //If the card isn't located the software will get into sleep mode.
+  if (!SD.begin(SDCARD)) {
+    SDReadFailed();
+  }
   loadData();
 }
 
