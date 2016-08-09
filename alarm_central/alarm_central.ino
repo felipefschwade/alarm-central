@@ -188,6 +188,8 @@ int receivedSignal() {
                   if (controls[i] != NULL && controls[i] == mySwitch.getReceivedValue()) {
                     Serial.println("Control Signal");
                     mySwitch.resetAvailable();
+                    //Delay to slow down the RFsignal reading
+                    delay(500);
                     return CONTROL_SIGNAL; 
                   }
               }
@@ -230,9 +232,11 @@ void setAlarmOn() {
     turnOff(GREEN_LED);
     Serial.println("Alarm On");
     state = ALARM_ON;
+    mySwitch.resetAvailable();
+    //Setting a delay to avoid turning the alarm off accidentally
+    delay(300);
     sirenBeep(1);
     Serial.println(state);
-    delay(300);
     turnOff(GREEN_LED);  
 }
 
@@ -259,6 +263,7 @@ void setAlarmOff() {
     turnOff(SIREN); 
     //Delay to avoid an accidental alarm activitation while the control button is pressed
     delay(300);
+    mySwitch.resetAvailable();
     state = ALARM_OFF;
     turnOff(RED_LED);
     sirenBeep(2);
