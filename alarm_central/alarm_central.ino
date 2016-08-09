@@ -79,12 +79,12 @@ void setup() {
   Serial.println("INICIADO!");
   initiatePins();
   mySwitch.enableReceive(0);
-  state = ALARM_OFF;
   //If the card isn't located the software will get into sleep mode.
   if (!SD.begin(SDCARD)) {
     SDReadFailed();
   }
   loadData();
+  state = ALARM_OFF;
 }
 
 void loop() {
@@ -183,12 +183,14 @@ int receivedSignal() {
               }
               mySwitch.resetAvailable();
           }
-     if (digitalRead(SENSOR_PIR1) == 0) {
-           return SENSOR_SIGNAL; 
+        Serial.println("Button Reading");
+        if (digitalRead(NEW_CONTROL_BUTTON) == 0) {
+            return NEW_CONTROL_BUTTON_PRESSED;
         }
-      if (digitalRead(NEW_CONTROL_BUTTON) == 0) {
-          return NEW_CONTROL_BUTTON_PRESSED;
-      }
+       if (digitalRead(SENSOR_PIR1) == 0) {
+             return SENSOR_SIGNAL; 
+        }
+      Serial.println(digitalRead(NEW_CONTROL_BUTTON));
       return INDEFINIDO;
 }
 
@@ -272,12 +274,14 @@ void SDOpenFileFailed() {
     turnOn(GREEN_LED);
     delay(999999);
 }
+
 //Lock the code execution and turn on the red led for show a SDCard oppening error.
 void SDReadFailed() {
     Serial.println("Initialization Failed! Please verify your SD Card and try Again");
     digitalWrite(RED_LED, HIGH);
     delay(999999);
 }
+
 //Load all the data from de SD card and put it into the Arduino RAM
 void loadData() {
   myFile = SD.open("codes.txt", FILE_WRITE);
