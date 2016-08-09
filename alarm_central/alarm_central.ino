@@ -27,6 +27,7 @@ void setAlarmOff();
 void startAlarm();
 void SDOpenFileFailed();
 void SDReadFailed();
+void loadData();
 
 //By default, the RF SENSOR pin is definited in RCswitch library on pin2
 /*
@@ -74,34 +75,16 @@ long int controls [21];
 RCSwitch mySwitch = RCSwitch();
 
 void setup() {
-  
+  if (!SD.begin(SDCARD)) {
+    SDReadFailed();
+  }
   initiatePins();
+  mySwitch.enableReceive(0);
   state = ALARM_OFF;
   Serial.begin(9600);
   Serial.println("INICIADO!");
   //If the card isn't located the software will get into sleep mode.
-  if (!SD.begin(SDCARD)) {
-    SDReadFailed();
-  }
-  mySwitch.enableReceive(0);
-  myFile = SD.open("codes.txt", FILE_WRITE);
-
-  // Open the file for reading:
-  myFile = SD.open("codes.txt");
-  if (myFile) {
-    // read from the file until there's nothing else in it:
-    int i = 0;
-    while (myFile.available()) {
-     Serial.println("Lendo o arquivo");
-     controls[i] = myFile.parseInt();
-     Serial.println(controls[i]);
-     i++;
-    }
-    // close the file:
-    myFile.close();
-  } else {
-    SDOpenFileFailed();
-  }
+  loadData();
 }
 
 void loop() {
@@ -136,6 +119,7 @@ void loop() {
       break;
       //Reset your arduino after adding a new control.
       case NEW_CONTROL_ADDING:
+        boolean flag = 0;
         if (mySwitch.available()) {
          new_control = mySwitch.getReceivedValue();
          Serial.println(new_control);
@@ -154,21 +138,25 @@ void loop() {
             delay(300);
             turnOff(GREEN_LED);
             delay(200);
+            loadData();
+            flag = 1;
             }
         } else {
           //Lock the file again if something went wrong
-          SDOpenFileFailed();
-        }
-       if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
+          SDOpenFileFailed(); 
+         }
+       } else if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
           //Delay for the user don't accidetaly get again into this state
           delay(1000);
+          flag = 1;
        }
-      Serial.println("Alarm Off");
-      state = ALARM_OFF;
-      break;
+      if (flag == 1) {
+        Serial.println("Alarm Off");
+        state = ALARM_OFF;
+        break;
+      }
     } 
   }
-}
 
 void initiatePins() {
     pinMode(SENSOR_PIR1, INPUT);
@@ -289,4 +277,24 @@ void SDReadFailed() {
     Serial.println("Initialization Failed! Please verify your SD Card and try Again");
     digitalWrite(RED_LED, HIGH);
     delay(999999);
+}
+//Load all the data from de SD card and put it into the Arduino RAM
+void loadData() {
+  myFile = SD.open("codes.txt", FILE_WRITE);
+  // Open the file for reading:
+  myFile = SD.open("codes.txt");
+  if (myFile) {
+    // read from the file until there's nothing else in it:
+    int i = 0;
+    while (myFile.available()) {
+     Serial.println("Lendo o arquivo");
+     controls[i] = myFile.parseInt();
+     Serial.println(controls[i]);
+     i++;
+    }
+    // close the file:
+    myFile.close();
+  } else {
+    SDOpenFileFailed();
+  }
 }
