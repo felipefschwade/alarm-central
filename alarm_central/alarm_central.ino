@@ -193,9 +193,9 @@ int receivedSignal() {
               }
               mySwitch.resetAvailable();
           }
-//     if (digitalRead(SENSOR_PIR1) == 0) {
-//           return SENSOR_SIGNAL; 
-//        }
+     if (digitalRead(SENSOR_PIR1) == 0) {
+           return SENSOR_SIGNAL; 
+        }
       if (digitalRead(NEW_CONTROL_BUTTON) == 0) {
           return NEW_CONTROL_BUTTON_PRESSED;
       }
