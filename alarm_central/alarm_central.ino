@@ -37,8 +37,8 @@ void SDReadFailed();
 #define SDCARD 4
 #define NEW_CONTROL_BUTTON 5 
 #define SIREN 8
-#define RED_LED 10
-#define GREEN_LED 9
+#define RED_LED 6
+#define GREEN_LED 7
 #define INDEFINIDO -1
 
 //Defining all global scope variables
