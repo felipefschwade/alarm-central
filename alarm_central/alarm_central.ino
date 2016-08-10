@@ -272,7 +272,6 @@ void addNewControl(int signalReceived) {
         if (mySwitch.available()) { //Search for a RF433Mhz signal
          new_control = mySwitch.getReceivedValue(); //put the received signal code into a new variable
          Serial.println(new_control); //Print the code (For debugging only)
-         mySwitch.resetAvailable(); //Reset the old receiver RF433Mhz code
          myFile = SD.open("codes.txt", FILE_WRITE); //Open the codes file to write the new code into the file
         // if the file opened okay, write to it
         if (myFile) {
@@ -283,12 +282,12 @@ void addNewControl(int signalReceived) {
           Serial.println("Control Code save with success."); //More debuging Message
           loadData(); //Reload the data into the Arduino RAM
           //Make a loop to indicate using led blink that the control were successfull saved
-          for (int i=0; i <= 2; i++) {
+          for (int i=0; i <= 20; i++) {
             //Proposital delay for avoid a accindetal Alarm Set while adding a control
             turnOn(GREEN_LED);
-            delay(300);
+            delay(100);
             turnOff(GREEN_LED);
-            delay(200);
+            delay(100);
             flag = 1; //Mark the flag as true
            }
         } else {
@@ -301,6 +300,7 @@ void addNewControl(int signalReceived) {
           flag = 1; //Mark the flag as tru
        }
       if (flag == 1) {
+        mySwitch.resetAvailable(); //Reset the old receiver RF433Mhz code 
         Serial.println("Alarm Off"); //Debuggin Message
         state = ALARM_OFF; //Set the next State
       }  
