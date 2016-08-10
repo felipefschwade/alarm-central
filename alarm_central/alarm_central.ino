@@ -270,6 +270,7 @@ void loadData() {
 void addNewControl(int signalReceived) {
   boolean flag = 0; //Set a flag that I'll be used to detect a user interation
         if (mySwitch.available()) { //Search for a RF433Mhz signal
+         turnOn(GREEN_LED);
          new_control = mySwitch.getReceivedValue(); //put the received signal code into a new variable
          Serial.println(new_control); //Print the code (For debugging only)
          myFile = SD.open("codes.txt", FILE_WRITE); //Open the codes file to write the new code into the file
@@ -282,7 +283,7 @@ void addNewControl(int signalReceived) {
           Serial.println("Control Code save with success."); //More debuging Message
           loadData(); //Reload the data into the Arduino RAM
           //Make a loop to indicate using led blink that the control were successfull saved
-          for (int i=0; i <= 20; i++) {
+          for (int i=0; i <= 10; i++) {
             //Proposital delay for avoid a accindetal Alarm Set while adding a control
             turnOn(GREEN_LED);
             delay(100);
