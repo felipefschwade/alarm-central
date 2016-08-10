@@ -119,7 +119,7 @@ void loop() {
       break;
       //Reset your arduino after adding a new control.
       case NEW_CONTROL_ADDING:
-        addNewControl();
+        addNewControl(signalReceived);
         break;
     } 
   }
@@ -267,7 +267,7 @@ void loadData() {
   }
 }
 //Insert a new control into the SDCard
-void addNewControl() {
+void addNewControl(int signalReceived) {
   boolean flag = 0; //Set a flag that I'll be used to detect a user interation
         if (mySwitch.available()) { //Search for a RF433Mhz signal
          new_control = mySwitch.getReceivedValue(); //put the received signal code into a new variable
@@ -295,7 +295,7 @@ void addNewControl() {
           //Lock the file again if something went wrong
           SDOpenFileFailed(); 
          }
-       } else if (digitalRead(!NEW_CONTROL_BUTTON)) { //Read the NEW_CONTROL_BUTTON STATE
+       } else if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) { //Read the NEW_CONTROL_BUTTON STATE
           //Delay for the user don't accidetaly get again into this state
           delay(1000);
           flag = 1; //Mark the flag as tru
