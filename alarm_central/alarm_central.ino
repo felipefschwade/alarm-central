@@ -28,7 +28,7 @@ void startAlarm();
 void SDOpenFileFailed();
 void SDReadFailed();
 void loadData();
-
+void addNewControl();
 //By default, the RF SENSOR pin is definited in RCswitch library on pin2
 /*
   @TODO
@@ -119,7 +119,8 @@ void loop() {
       break;
       //Reset your arduino after adding a new control.
       case NEW_CONTROL_ADDING:
-        addNewControl
+        addNewControl();
+        break;
     } 
   }
 
@@ -265,13 +266,13 @@ void loadData() {
     SDOpenFileFailed();
   }
 }
-
+//Insert a new control into the SDCard
 void addNewControl() {
-  boolean flag = 0;
-        if (mySwitch.available()) {
-         new_control = mySwitch.getReceivedValue();
-         Serial.println(new_control);
-         mySwitch.resetAvailable();
+  boolean flag = 0; //Set a flag that I'll be used to detect a user interation
+        if (mySwitch.available()) { //Search for a RF433Mhz signal
+         new_control = mySwitch.getReceivedValue(); //put the received signal code into a new variable
+         Serial.println(new_control); //Print the code (For debugging only)
+         mySwitch.resetAvailable(); //Reset the 
          myFile = SD.open("codes.txt", FILE_WRITE);
         // if the file opened okay, write to it
         if (myFile) {
@@ -293,7 +294,7 @@ void addNewControl() {
           //Lock the file again if something went wrong
           SDOpenFileFailed(); 
          }
-       } else if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
+       } else if (digitalRead(!NEW_CONTROL_BUTTON)) { //Read the NEW_CONTROL_BUTTON STATE
           //Delay for the user don't accidetaly get again into this state
           delay(1000);
           flag = 1;
@@ -301,6 +302,5 @@ void addNewControl() {
       if (flag == 1) {
         Serial.println("Alarm Off");
         state = ALARM_OFF;
-        break;
       }  
 }
