@@ -119,42 +119,7 @@ void loop() {
       break;
       //Reset your arduino after adding a new control.
       case NEW_CONTROL_ADDING:
-        boolean flag = 0;
-        if (mySwitch.available()) {
-         new_control = mySwitch.getReceivedValue();
-         Serial.println(new_control);
-         mySwitch.resetAvailable();
-         myFile = SD.open("codes.txt", FILE_WRITE);
-        // if the file opened okay, write to it
-        if (myFile) {
-          Serial.print("Writing the new code into the codes.txt...");
-          myFile.println(new_control);
-          myFile.close();
-          Serial.println("Control Code save with success.");
-          loadData();
-          //Make a loop to indicate using led blink that the control were successfull saved
-          for (int i=0; i <= 2; i++) {
-            //Proposital delay for avoid a accindetal Alarm Set while adding a control
-            turnOn(GREEN_LED);
-            delay(300);
-            turnOff(GREEN_LED);
-            delay(200);
-            flag = 1;
-           }
-        } else {
-          //Lock the file again if something went wrong
-          SDOpenFileFailed(); 
-         }
-       } else if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
-          //Delay for the user don't accidetaly get again into this state
-          delay(1000);
-          flag = 1;
-       }
-      if (flag == 1) {
-        Serial.println("Alarm Off");
-        state = ALARM_OFF;
-        break;
-      }
+        addNewControl
     } 
   }
 
@@ -299,4 +264,43 @@ void loadData() {
   } else {
     SDOpenFileFailed();
   }
+}
+
+void addNewControl() {
+  boolean flag = 0;
+        if (mySwitch.available()) {
+         new_control = mySwitch.getReceivedValue();
+         Serial.println(new_control);
+         mySwitch.resetAvailable();
+         myFile = SD.open("codes.txt", FILE_WRITE);
+        // if the file opened okay, write to it
+        if (myFile) {
+          Serial.print("Writing the new code into the codes.txt...");
+          myFile.println(new_control);
+          myFile.close();
+          Serial.println("Control Code save with success.");
+          loadData();
+          //Make a loop to indicate using led blink that the control were successfull saved
+          for (int i=0; i <= 2; i++) {
+            //Proposital delay for avoid a accindetal Alarm Set while adding a control
+            turnOn(GREEN_LED);
+            delay(300);
+            turnOff(GREEN_LED);
+            delay(200);
+            flag = 1;
+           }
+        } else {
+          //Lock the file again if something went wrong
+          SDOpenFileFailed(); 
+         }
+       } else if (signalReceived == NEW_CONTROL_BUTTON_PRESSED) {
+          //Delay for the user don't accidetaly get again into this state
+          delay(1000);
+          flag = 1;
+       }
+      if (flag == 1) {
+        Serial.println("Alarm Off");
+        state = ALARM_OFF;
+        break;
+      }  
 }
