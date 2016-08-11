@@ -69,7 +69,7 @@ File myFile;
 
 //TODO Auto control codes generation
 //Here you put the quantity of controls that you want in you 
-long int controls [21];
+long int controls[];
 
 //Defining the RF433Mhz decoder library
 RCSwitch mySwitch = RCSwitch();
